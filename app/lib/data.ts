@@ -1,4 +1,6 @@
 import { sql } from '@vercel/postgres';
+import { unstable_noStore as noStore } from 'next/cache';
+
 import {
   CustomerField,
   CustomersTableType,
@@ -11,7 +13,7 @@ import {
 import { formatCurrency } from './utils';
 
 export async function fetchRevenue() {
-  // noStore();
+  noStore();
   // Add noStore() here to prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
 
@@ -34,6 +36,8 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore();
+
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -54,6 +58,8 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore();
+
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -93,6 +99,8 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  noStore();
+
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -125,6 +133,8 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
+  noStore();
+
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -146,6 +156,8 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+  noStore();
+
   try {
     const data = await sql<InvoiceForm>`
       SELECT
